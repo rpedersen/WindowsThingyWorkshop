@@ -1,4 +1,4 @@
-# Windows Thingy&trade; Workshop
+# ThingLabs Thingy&trade; with Windows 10 and Azure Workshop
 _BUILDING CONNECTED THINGS WITH WINDOWS 10 IOT AND MICROSOFT AZURE_
 
 This repo is the supporting code for a full day ThingLabs workshop using Windows 10 IoT Core on a Rasberry Pi 2 (with a Grove kit) and Azure IoT services. 
