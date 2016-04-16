@@ -68,6 +68,8 @@ namespace Thingy
         private int actualAmbientLight;
         // Create a variable to track the current ambient noise level
         private int soundLevel;
+        // Create a variable to track the state of the button
+        private SensorStatus buttonState;
         // Create a timer to control the rateof sensor and actuator interactions
         ThreadPoolTimer timer;
         // Create a deferral object to prevent the app from terminating
@@ -88,6 +90,8 @@ namespace Thingy
             lightSensor = DeviceFactory.Build.LightSensor(Pin.AnalogPin2);
             
             display = DeviceFactory.Build.RgbLcdDisplay();
+            
+            buttonState = SensorState.Off;
 
             // The IO to the GrovePi sensors and actuators can generate a lot
             // of exceptions - wrap all GrovePi API calls in try/cath statements.
@@ -112,20 +116,15 @@ namespace Thingy
                 soundLevel = soundSensor.SensorValue();
                 
                 // Check the button state
-                if (button.CurrentState == SensorStatus.On)
+                if (button.CurrentState != buttonState)
                 {
-                    // If the button is depressed, turn on the blue LED
-                    // and activate the buzzer
-                    buzzer.ChangeState(SensorStatus.On);
-                    blueLed.ChangeState(SensorStatus.On);
+                    buttonState = button.CurrentState == SensorStatus.Off ? SensorStatus.On : SensorStatus.Off;
+                    
+                    blueLed.ChangeState(buttonState);
+                    buzzer.ChangeState(buttonState);
+                    
                     // For debugging purposes, log a console message
-                    System.Diagnostics.Debug.WriteLine("**** BUTTON ON ****");
-                }
-                else if(buzzer.CurrentState == SensorStatus.On || blueLed.CurrentState == SensorStatus.On)
-                {
-                    // Turn the buzzer and LED off
-                    buzzer.ChangeState(SensorStatus.Off);
-                    blueLed.ChangeState(SensorStatus.Off);
+                    System.Diagnostics.Debug.WriteLine("**** BUTTON STATE: " + buttonState + " ****");
                 }
 
                 // Capture the current value from the Light Sensor
